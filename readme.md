@@ -12,6 +12,8 @@ This is local-based discord bot for moderation. It has some commands for moderat
 ```json
 {
     "token": "your token"
+	"client_id": "your twitch client id",
+    "client_secret": "your twitch client secret"
 }
 ```
 also go to [Discord Developer Portal](https://discord.com/developers/applications) and create a bot, then copy the token and paste it in ```config.json``` file.

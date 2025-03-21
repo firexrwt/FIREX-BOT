@@ -19,11 +19,12 @@ class TwitchCog(commands.Cog):
         for (streamer_nickname,) in streamers_list:
             stream = checkIfLive(streamer_nickname)
             print(str(stream))
+            print(f"Статус {streamer_nickname}: {stream}")
             if stream != "OFFLINE":
                 cur.execute('SELECT status FROM streamers WHERE nickname = ?', (stream.streamer,))
                 result = cur.fetchone()
                 print(result[0])
-                if result is None or result[0] == "OFFLINE":
+                if result is None or (result and result[0] == "OFFLINE"):
                     cur.execute('UPDATE streamers SET status = "LIVE" WHERE nickname = ?', (stream.streamer,))
                     self.bot.db_streamers.commit()
                     notification = nextcord.Embed(

@@ -64,6 +64,11 @@ async def on_ready():
     )
     await bot.user.edit(avatar=bot.avatar_data)
 
+    # Устанавливаем всех стримеров в OFFLINE при старте
+    cur = bot.db_streamers.cursor()
+    cur.execute("UPDATE streamers SET status = 'OFFLINE'")
+    bot.db_streamers.commit()
+
 @bot.event
 async def on_member_join(member):
     channel = bot.get_channel(909086509993459742)
