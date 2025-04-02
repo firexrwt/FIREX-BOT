@@ -1,4 +1,4 @@
-# MODERATION-BOT
+# FIREX BOT
 
 ## Description
 This is local-based discord bot for moderation. It has some commands for moderation and some commands for fun. It is still in development and will be updated soon.
