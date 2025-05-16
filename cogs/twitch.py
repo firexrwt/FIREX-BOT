@@ -31,10 +31,16 @@ class TwitchCog(commands.Cog):
             stream_status_or_error = checkIfLive(streamer_nickname)
 
             if isinstance(stream_status_or_error, Stream):
+                print(f"Статус {streamer_nickname} (API): LIVE - {stream_status_or_error.title}")
+            elif isinstance(stream_status_or_error, ApiError):
+                print(f"Статус {streamer_nickname} (API): Ошибка - {str(stream_status_or_error)}")
+            else:  # Должно быть "OFFLINE"
+                print(f"Статус {streamer_nickname} (API): {str(stream_status_or_error)}")
+
+            if isinstance(stream_status_or_error, Stream):
                 stream = stream_status_or_error
                 try:
-                    cur.execute('SELECT status FROM streamers WHERE nickname = ?',
-                                (stream.streamer,))
+                    cur.execute('SELECT status FROM streamers WHERE nickname = ?', (stream.streamer,))
                     result = cur.fetchone()
                 except Exception as e:
                     print(f"Ошибка при запросе статуса стримера {stream.streamer} из БД: {e}")
@@ -44,6 +50,7 @@ class TwitchCog(commands.Cog):
                     try:
                         cur.execute('UPDATE streamers SET status = "LIVE" WHERE nickname = ?', (stream.streamer,))
                         self.bot.db_streamers.commit()
+                        print(f"Статус {stream.streamer} обновлен на LIVE в БД. Отправка уведомления.")
                     except Exception as e:
                         print(f"Ошибка при обновлении статуса на LIVE для {stream.streamer} в БД: {e}")
                         continue
@@ -82,11 +89,12 @@ class TwitchCog(commands.Cog):
                     try:
                         cur.execute('UPDATE streamers SET status = "OFFLINE" WHERE nickname = ?', (streamer_nickname,))
                         self.bot.db_streamers.commit()
+                        print(f"Статус {streamer_nickname} обновлен на OFFLINE в БД.")
                     except Exception as e:
                         print(f"Ошибка при обновлении статуса на OFFLINE для {streamer_nickname} в БД: {e}")
 
             elif isinstance(stream_status_or_error, ApiError):
-                print(f"Ошибка API при проверке {streamer_nickname}: {str(stream_status_or_error)}")
+                pass
 
             else:
                 print(f"Неожиданный результат от checkIfLive для {streamer_nickname}: {str(stream_status_or_error)}")
